@@ -1,0 +1,171 @@
+:root {
+    --primary: #2563eb;
+    --dark: #1e293b;
+    --light: #f8fafc;
+    --gray: #64748b;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--light);
+    margin: 0;
+    color: var(--dark);
+}
+
+.container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+
+header { background: white; padding: 40px 0; border-bottom: 1px solid #e2e8f0; text-align: center; }
+
+h1 span { color: var(--primary); }
+
+.search-box {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+input {
+    width: 60%;
+    padding: 12px 20px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 16px;
+    outline: none;
+}
+
+input:focus { border-color: var(--primary); }
+
+button {
+    padding: 12px 25px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+/* Grid de Cards */
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 25px;
+    margin-top: 40px;
+}
+
+.card {
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+    display: flex;
+    flex-direction: column;
+}
+
+.card:hover { transform: translateY(-5px); }
+
+.card img { width: 100%; height: 200px; object-fit: contain; margin-bottom: 15px; }
+
+.card h3 { font-size: 16px; margin: 10px 0; height: 40px; overflow: hidden; }
+
+.card .price { font-size: 20px; font-weight: 700; color: var(--primary); }
+
+.card .store { font-size: 12px; color: var(--gray); margin-bottom: 15px; }
+
+.card a {
+    text-decoration: none;
+    background: var(--dark);
+    color: white;
+    text-align: center;
+    padding: 10px;
+    border-radius: 6px;
+    margin-top: auto;
+}
+
+.hidden { display: none; }
+
+
+/* Borda dourada*/
+/* Adicione isso ao seu style.css */
+.card.destaque {
+    border: 2px solid #fbbf24; /* Cor dourada */
+    background: #fffdf5;
+    position: relative;
+}
+
+.card.destaque::before {
+    content: "OFERTA PARCEIRA";
+    position: absolute;
+    top: -10px;
+    left: 10px;
+    background: #fbbf24;
+    color: #000;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.card.destaque {
+    transform: scale(1.02); /* Faz o card de afiliado parecer levemente maior */
+}
+
+.card:hover.destaque {
+    transform: translateY(-5px); /* Faz o card de afiliado parecer levemente maior */
+}
+
+/*Nova parte*/
+/* Container dos filtros */
+.filter-bar {
+    margin-top: 20px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+}
+
+.filter-bar span {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gray);
+}
+
+/* Botão de Filtro Estilizado */
+.btn-filter {
+    background: white;
+    border: 2px solid #e2e8f0;
+    color: var(--dark);
+    padding: 8px 18px;
+    border-radius: 50px; /* Estilo pílula */
+    cursor: pointer;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    transition: all 0.2s ease; /* Transição suave */
+    outline: none;
+}
+
+/* Efeito ao passar o mouse */
+.btn-filter:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+    transform: translateY(-2px); /* Sobe levemente */
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+/* Efeito ao clicar */
+.btn-filter:active {
+    transform: translateY(0); /* Volta ao normal */
+    transform: scale(0.95); /* Efeito de compressão */
+    background: #1d4ed8; /* Azul um pouco mais escuro */
+}
+
+/* Estilo para quando o botão estiver "ativo" (Opcional) */
+.btn-filter.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}

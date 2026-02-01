@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DryFour | Comparador de Ofertas</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Dry<span>Four</span> Ofertas</h1>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="O que você quer comprar hoje?">
+                <button onclick="buscarProdutos()">Buscar</button>
+            </div>
+
+            <div class="filter-bar">
+                <span>Ordenar por:</span>
+                <button class="btn-filter" onclick="ordenarProdutos('menor')">Menor Preço</button>
+                <button class="btn-filter" onclick="ordenarProdutos('maior')">Maior Preço</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div id="loading" class="hidden">Buscando as melhores ofertas...</div>
+        <div id="resultsGrid" class="results-grid">
+            </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
