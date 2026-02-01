@@ -12,7 +12,7 @@ async function buscarLomadee(query) {
     }
 
     try {
-        const url = `https://api.socialads.com.br/v3/${token}/product/_search;`;
+        const url = `https://api.socialads.com.br/v3/${token}/product/_search`;
         const response = await axios.get(url, {
             params: {
                 keyword: query,
