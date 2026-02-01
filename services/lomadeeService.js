@@ -12,16 +12,14 @@ async function buscarLomadee(query) {
     }
 
     try {
-        const url = `https://api.socialads.com.br/v3/${token}/product/_search`;
+        const url = `https://api.lomadee.com/v3/${token}/product/_search`;
         const response = await axios.get(url, {
             params: {
                 keyword: query,
                 sourceId: sourceId,
                 country: 'BR',
                 size: 10
-            },
-            // Mantendo o agente para compatibilidade com certificados
-            httpsAgent: new https.Agent({ rejectUnauthorized: false })
+            }
         });
 
         const products = response.data.products || [];
