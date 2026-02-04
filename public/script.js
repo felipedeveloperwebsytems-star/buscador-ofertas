@@ -1,7 +1,7 @@
 let produtosCache = []; 
 
 async function buscarProdutos() {
-    const query = document.getElementById('searchInput').value;
+    const query = document.getElementById('searchInput').value.trim();
     const grid = document.getElementById('resultsGrid');
     const loading = document.getElementById('loading');
 
@@ -11,13 +11,11 @@ async function buscarProdutos() {
     loading.classList.remove('hidden');
 
     try {
-        // Busca na nossa API (que agora traz Amazon + Lomadee + Manuais)
         const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
         const data = await response.json();
         
         loading.classList.add('hidden');
         
-        // Se a API retornar erro ou não for um array, tratamos aqui
         if (data.error) {
             grid.innerHTML = `<p>Erro: ${data.error}</p>`;
             return;
@@ -47,8 +45,6 @@ function renderizarCards(lista) {
         card.className = item.isManual ? 'card destaque' : 'card';
         
         const imagem = item.thumbnail || 'https://via.placeholder.com/200?text=Sem+Imagem';
-
-        // Melhoria: Limitar o título se for muito grande (comum na Amazon)
         const tituloCurto = item.title.length > 60 ? item.title.substring(0, 60) + '...' : item.title;
 
         card.innerHTML = `
@@ -68,20 +64,16 @@ function ordenarProdutos(criterio) {
     const listaOrdenada = [...produtosCache].sort((a, b) => {
         const extrairPreco = (p) => {
             if (!p || typeof p !== 'string') return 0;
-            // Remove R$, pontos de milhar e converte vírgula em ponto
-            // Ex: "R$ 1.250,00" -> "1250.00"
             const numerico = p.replace('R$', '').replace(/\./g, '').replace(',', '.').trim();
             return parseFloat(numerico) || 0;
         };
         const precoA = extrairPreco(a.price);
         const precoB = extrairPreco(b.price);
-        
         return criterio === 'menor' ? precoA - precoB : precoB - precoA;
     });
     renderizarCards(listaOrdenada);
 }
 
-// Evento para o Enter
 document.getElementById('searchInput').addEventListener('keypress', (e) => {
     if (e.key === 'Enter') buscarProdutos();
 });

@@ -3,7 +3,6 @@ const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
 const afiliados = require('./linksAfiliados'); 
-const { buscarLomadee } = require('./services/lomadeeService');
 const { buscarAmazon } = require('./services/rainforestService');
 
 const app = express();
@@ -22,7 +21,7 @@ app.get('/api/search', async (req, res) => {
     try {
         console.log(`🔍 Iniciando busca por: ${query}`);
 
-        // --- 1. BUSCA NO CACHE (COM PROTEÇÃO) ---
+        // --- 1. BUSCA NO CACHE ---
         let produtosDoCache = [];
         try {
             const cacheQuery = `
@@ -34,7 +33,6 @@ app.get('/api/search', async (req, res) => {
             produtosDoCache = cacheResult.rows;
         } catch (dbError) {
             console.error("⚠️ Erro no Banco (Ignorando cache):", dbError.message);
-            // Se o banco der erro, não travamos o site, apenas seguimos para as APIs
         }
 
         if (produtosDoCache.length > 0) {
@@ -46,25 +44,19 @@ app.get('/api/search', async (req, res) => {
             return res.json([...manuais, ...produtosDoCache]);
         }
 
-        // --- 2. BUSCA NAS APIS ---
-        console.log("💰 APIs: Buscando dados novos...");
-        const [resultsLomadee, resultsAmazon] = await Promise.all([
-            buscarLomadee(query).catch(() => []),
-            buscarAmazon(query).catch(() => [])
-        ]);
+        // --- 2. BUSCA NA AMAZON ---
+        console.log("💰 API AMAZON: Buscando dados novos...");
+        const apiResults = await buscarAmazon(query).catch(() => []);
 
-        const apiResults = [...resultsAmazon, ...resultsLomadee];
-
-        // --- 3. SALVAR NO CACHE (EM SEGUNDO PLANO) ---
+        // --- 3. SALVAR NO CACHE ---
         if (apiResults.length > 0) {
-            // Tentamos salvar, mas se falhar, o usuário recebe os produtos do mesmo jeito
             apiResults.forEach(async (p) => {
                 try {
                     await pool.query(
                         `INSERT INTO cache_produtos (termo_busca, title, price, link, thumbnail, store) VALUES ($1, $2, $3, $4, $5, $6)`,
                         [query, p.title, p.price, p.link, p.thumbnail, p.store]
                     );
-                } catch (e) { /* silencia erro de inserção */ }
+                } catch (e) { /* silencia erro */ }
             });
         }
 
