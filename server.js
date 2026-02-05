@@ -9,11 +9,14 @@ const app = express();
 app.use(cors());
 app.use(express.static('public'));
 
-// CONFIGURAÇÃO CORRIGIDA PARA O RENDER + SUPABASE POOLER
+// CONFIGURAÇÃO REFORMULADA PARA EVITAR ERRO DE URL (COM CARACTERES ESPECIAIS)
 const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
+    user: 'postgres.rdkybuxggdsbedkgjbqu',
+    host: 'aws-1-sa-east-1.pooler.supabase.com', // Conforme o link do seu projeto
+    database: 'postgres',
+    password: process.env.DB_PASSWORD, // Lida com o # e a , sem quebrar
+    port: 6543,
     ssl: { rejectUnauthorized: false },
-    // A linha abaixo resolve o erro "Tenant or user not found" no modo Transaction Pooler
     options: "-c project=rdkybuxggdsbedkgjbqu"
 });
 
@@ -53,7 +56,6 @@ app.get('/api/search', async (req, res) => {
 
         // --- 3. SALVAR NO CACHE ---
         if (apiResults.length > 0) {
-            // Usamos Promise.allSettled para garantir que as tentativas de salvamento não travem a resposta
             await Promise.allSettled(apiResults.map(p => 
                 pool.query(
                     `INSERT INTO cache_produtos (termo_busca, title, price, link, thumbnail, store) VALUES ($1, $2, $3, $4, $5, $6)`,
@@ -74,5 +76,5 @@ app.get('/api/search', async (req, res) => {
     }
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000; // Ajustado para porta padrão do Render
 app.listen(PORT, () => console.log(`🚀 Servidor rodando na porta ${PORT}`));
