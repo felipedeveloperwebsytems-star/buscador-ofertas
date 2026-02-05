@@ -9,9 +9,12 @@ const app = express();
 app.use(cors());
 app.use(express.static('public'));
 
+// CONFIGURAÇÃO CORRIGIDA PARA O RENDER + SUPABASE POOLER
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false }
+    ssl: { rejectUnauthorized: false },
+    // A linha abaixo resolve o erro "Tenant or user not found" no modo Transaction Pooler
+    options: "-c project=rdkybuxggdsbedkgjbqu"
 });
 
 app.get('/api/search', async (req, res) => {
@@ -50,14 +53,13 @@ app.get('/api/search', async (req, res) => {
 
         // --- 3. SALVAR NO CACHE ---
         if (apiResults.length > 0) {
-            apiResults.forEach(async (p) => {
-                try {
-                    await pool.query(
-                        `INSERT INTO cache_produtos (termo_busca, title, price, link, thumbnail, store) VALUES ($1, $2, $3, $4, $5, $6)`,
-                        [query, p.title, p.price, p.link, p.thumbnail, p.store]
-                    );
-                } catch (e) { /* silencia erro */ }
-            });
+            // Usamos Promise.allSettled para garantir que as tentativas de salvamento não travem a resposta
+            await Promise.allSettled(apiResults.map(p => 
+                pool.query(
+                    `INSERT INTO cache_produtos (termo_busca, title, price, link, thumbnail, store) VALUES ($1, $2, $3, $4, $5, $6)`,
+                    [query, p.title, p.price, p.link, p.thumbnail, p.store]
+                )
+            ));
         }
 
         const manuais = afiliados.produtos.filter(p => 
