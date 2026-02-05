@@ -9,15 +9,10 @@ const app = express();
 app.use(cors());
 app.use(express.static('public'));
 
-// CONFIGURAÇÃO REFORMULADA PARA EVITAR ERRO DE URL (COM CARACTERES ESPECIAIS)
+// Conexão simplificada para Neon.tech (funciona no Render e futuramente na Hostinger)
 const pool = new Pool({
-    user: 'postgres.rdkybuxggdsbedkgjbqu',
-    host: 'aws-1-sa-east-1.pooler.supabase.com', // Conforme o link do seu projeto
-    database: 'postgres',
-    password: process.env.DB_PASSWORD, // Lida com o # e a , sem quebrar
-    port: 6543,
-    ssl: { rejectUnauthorized: false },
-    options: "-c project=rdkybuxggdsbedkgjbqu"
+    connectionString: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false }
 });
 
 app.get('/api/search', async (req, res) => {
@@ -27,7 +22,14 @@ app.get('/api/search', async (req, res) => {
     try {
         console.log(`🔍 Iniciando busca por: ${query}`);
 
-        // --- 1. BUSCA NO CACHE ---
+        // --- 1. FILTRAR PRODUTOS MANUAIS (linksAfiliados.js) ---
+        // Eles sempre são processados primeiro
+        const manuais = afiliados.produtos.filter(p => 
+            (p.title || "").toLowerCase().includes(query) || 
+            (p.keyword || "").toLowerCase().includes(query)
+        ).map(p => ({ ...p, isManual: true }));
+
+        // --- 2. BUSCA NO CACHE (Neon) ---
         let produtosDoCache = [];
         try {
             const cacheQuery = `
@@ -38,36 +40,35 @@ app.get('/api/search', async (req, res) => {
             const cacheResult = await pool.query(cacheQuery, [query]);
             produtosDoCache = cacheResult.rows;
         } catch (dbError) {
-            console.error("⚠️ Erro no Banco (Ignorando cache):", dbError.message);
+            console.error("⚠️ Erro no Banco Neon:", dbError.message);
         }
 
+        // Se achou no cache, soma com os manuais e envia
         if (produtosDoCache.length > 0) {
-            console.log("🚀 CACHE: Produtos encontrados!");
-            const manuais = afiliados.produtos.filter(p => 
-                (p.title || "").toLowerCase().includes(query) || (p.keyword || "").toLowerCase().includes(query)
-            ).map(p => ({ ...p, isManual: true }));
-
+            console.log("🚀 CACHE: Resultados encontrados no Neon!");
             return res.json([...manuais, ...produtosDoCache]);
         }
 
-        // --- 2. BUSCA NA AMAZON ---
+        // --- 3. BUSCA NA AMAZON (Rainforest) ---
         console.log("💰 API AMAZON: Buscando dados novos...");
-        const apiResults = await buscarAmazon(query).catch(() => []);
+        const apiResults = await buscarAmazon(query).catch((err) => {
+            console.error("❌ Erro na Rainforest:", err.message);
+            return [];
+        });
 
-        // --- 3. SALVAR NO CACHE ---
+        // --- 4. SALVAR RESULTADOS DA API NO CACHE ---
         if (apiResults.length > 0) {
-            await Promise.allSettled(apiResults.map(p => 
+            // Salvamos no banco em segundo plano para não atrasar o usuário
+            apiResults.forEach(p => {
                 pool.query(
                     `INSERT INTO cache_produtos (termo_busca, title, price, link, thumbnail, store) VALUES ($1, $2, $3, $4, $5, $6)`,
                     [query, p.title, p.price, p.link, p.thumbnail, p.store]
-                )
-            ));
+                ).catch(err => console.error("Erro ao salvar cache:", err.message));
+            });
         }
 
-        const manuais = afiliados.produtos.filter(p => 
-            (p.title || "").toLowerCase().includes(query) || (p.keyword || "").toLowerCase().includes(query)
-        ).map(p => ({ ...p, isManual: true }));
-
+        // --- 5. RESULTADO FINAL (SOMA) ---
+        console.log(`✅ Busca finalizada. Manuais: ${manuais.length}, API: ${apiResults.length}`);
         res.json([...manuais, ...apiResults]);
 
     } catch (error) {
@@ -76,5 +77,5 @@ app.get('/api/search', async (req, res) => {
     }
 });
 
-const PORT = process.env.PORT || 10000; // Ajustado para porta padrão do Render
+const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => console.log(`🚀 Servidor rodando na porta ${PORT}`));
