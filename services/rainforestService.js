@@ -1,7 +1,8 @@
 const axios = require('axios');
 
 async function buscarAmazon(query) {
-    const apiKey = process.env.RAINFOREST_API_KEY;
+    //const apiKey = process.env.RAINFOREST_API_KEY;
+    const apiKey = "8A266808BC4A43CBA5B0F15CA689E6E3";
     const storeId = "dryfour-20"; // Sua Tag de Afiliado
 
     try {
