@@ -15,7 +15,7 @@ async function buscarAmazon(query) {
                 currency: 'BRL',
                 customer_location: 'brazil'
             },
-            timeout: 10000 
+            timeout: 15000 
         });
 
         const products = response.data.search_results || [];
