@@ -11,14 +11,21 @@
     <header>
         <div class="container">
             <h1>Dry<span>Four</span> Ofertas</h1>
-            <div class="search-box">
-                <input type="text" id="searchInput" placeholder="O que você quer comprar hoje?">
-                <button onclick="buscarProdutos()">Buscar</button>
+            <div class="search-container">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="O que você quer comprar hoje?">
+                    <button onclick="buscarProdutos()">Buscar</button>
+                </div>
+                <div class="filter-bar">
+                    <span>Ordenar por preço:</span>
+                    <button class="btn-filter" onclick="ordenarProdutos('menor')">Menor Valor</button>
+                    <button class="btn-filter" onclick="ordenarProdutos('maior')">Maior Valor</button>
+                </div>
             </div>
         </div>
     </header>
 
-    <main class="container main-layout">
+    <main class="main-layout">
         <aside class="sidebar">
             <h3>Categorias</h3>
             <div class="dropdown">
@@ -29,16 +36,11 @@
                 <button class="dropbtn" onclick="toggleDropdown('nicho-casa')">Casa & Eletro ▾</button>
                 <div id="nicho-casa" class="dropdown-content"></div>
             </div>
-            
-            <div class="filter-section">
-                <span>Ordenar Preço:</span>
-                <button class="btn-filter" onclick="ordenarProdutos('menor')">Menor</button>
-                <button class="btn-filter" onclick="ordenarProdutos('maior')">Maior</button>
-            </div>
         </aside>
 
         <section class="results-area">
-            <div id="loading" class="hidden">Buscando ofertas...</div>
+            <div id="loading" class="loading-msg hidden">🔍 Buscando as melhores ofertas...</div>
+            
             <div id="resultsGrid" class="results-grid"></div>
             
             <div id="pagination" class="pagination hidden">
@@ -50,19 +52,11 @@
             <div class="adsense-container">
                 <p>Publicidade Google AdSense</p>
             </div>
-
-            <section class="brand-info">
-                <img src="https://via.placeholder.com/150x50?text=DRYFOUR" alt="Logo" class="img-brand">
-                <br>
-                <a href="https://dryfou.com.br" target="_blank">Acesse: dryfou.com.br</a>
-            </section>
         </section>
     </main>
 
     <footer>
-        <div class="container">
-            <p>&copy; 2026 DryFour - Comparador de Ofertas</p>
-        </div>
+        <p>&copy; 2026 DryFour - Comparador de Ofertas</p>
     </footer>
 
     <script src="script.js"></script>
