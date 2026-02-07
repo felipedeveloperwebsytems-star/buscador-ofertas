@@ -17,5 +17,14 @@
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "pg": "^8.18.0"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/felipedeveloperwebsytems-star/buscador-ofertas.git"
+  },
+  "bugs": {
+    "url": "https://github.com/felipedeveloperwebsytems-star/buscador-ofertas/issues"
+  },
+  "homepage": "https://github.com/felipedeveloperwebsytems-star/buscador-ofertas#readme"
 }

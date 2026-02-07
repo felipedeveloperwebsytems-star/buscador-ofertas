@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DryFour | Comparador de Ofertas</title>
+    <title>DryFour | Buscador de Ofertas</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
@@ -15,20 +15,55 @@
                 <input type="text" id="searchInput" placeholder="O que você quer comprar hoje?">
                 <button onclick="buscarProdutos()">Buscar</button>
             </div>
-
-            <div class="filter-bar">
-                <span>Ordenar por:</span>
-                <button class="btn-filter" onclick="ordenarProdutos('menor')">Menor Preço</button>
-                <button class="btn-filter" onclick="ordenarProdutos('maior')">Maior Preço</button>
-            </div>
         </div>
     </header>
 
-    <main class="container">
-        <div id="loading" class="hidden">Buscando as melhores ofertas...</div>
-        <div id="resultsGrid" class="results-grid">
+    <main class="container main-layout">
+        <aside class="sidebar">
+            <h3>Categorias</h3>
+            <div class="dropdown">
+                <button class="dropbtn" onclick="toggleDropdown('nicho-tech')">Tecnologia ▾</button>
+                <div id="nicho-tech" class="dropdown-content"></div>
             </div>
+            <div class="dropdown">
+                <button class="dropbtn" onclick="toggleDropdown('nicho-casa')">Casa & Eletro ▾</button>
+                <div id="nicho-casa" class="dropdown-content"></div>
+            </div>
+            
+            <div class="filter-section">
+                <span>Ordenar Preço:</span>
+                <button class="btn-filter" onclick="ordenarProdutos('menor')">Menor</button>
+                <button class="btn-filter" onclick="ordenarProdutos('maior')">Maior</button>
+            </div>
+        </aside>
+
+        <section class="results-area">
+            <div id="loading" class="hidden">Buscando ofertas...</div>
+            <div id="resultsGrid" class="results-grid"></div>
+            
+            <div id="pagination" class="pagination hidden">
+                <button onclick="mudarPagina(-1)" id="btnPrev">Anterior</button>
+                <span id="pageIndicator">Página 1</span>
+                <button onclick="mudarPagina(1)" id="btnNext">Próxima</button>
+            </div>
+
+            <div class="adsense-container">
+                <p>Publicidade Google AdSense</p>
+            </div>
+
+            <section class="brand-info">
+                <img src="https://via.placeholder.com/150x50?text=DRYFOUR" alt="Logo" class="img-brand">
+                <br>
+                <a href="https://dryfou.com.br" target="_blank">Acesse: dryfou.com.br</a>
+            </section>
+        </section>
     </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 DryFour - Comparador de Ofertas</p>
+        </div>
+    </footer>
 
     <script src="script.js"></script>
 </body>
