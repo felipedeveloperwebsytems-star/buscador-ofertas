@@ -30,3 +30,24 @@ header { background: white; padding: 20px; border-bottom: 2px solid #fbbf24; tex
 
 .card { background: white; padding: 10px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
 .hidden { display: none; }
+
+.main-layout {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    height: calc(100vh - 150px); /* Ocupa o restante da tela abaixo do header */
+}
+
+.tab {
+    width: 250px;
+    background-color: #f1f1f1;
+    border-right: 1px solid #ccc;
+    height: 100%; /* Sidebar vai até o fim */
+    float: none; /* Flexbox cuida disso agora */
+}
+
+.content-area {
+    flex: 1; /* Ocupa o restante do espaço */
+    padding: 20px;
+    overflow-y: auto; /* Scroll apenas nos produtos */
+}
