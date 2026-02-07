@@ -13,7 +13,7 @@ async function buscarAmazon(query) {
                 query: query,
                 page: 1,
                 country: 'br',      
-                domain: 'com.br',   
+                domain: 'com',   
                 premium: 'true'     
             },
             timeout: 20000 // Aumentado para 20s pois o modo premium pode demorar
