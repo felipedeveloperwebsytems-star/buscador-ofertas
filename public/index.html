@@ -3,61 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DryFour | Buscador de Ofertas</title>
+    <title>DryFour | Comparador</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>
         <div class="container">
-            <h1>Dry<span>Four</span> Ofertas</h1>
-            <div class="search-container">
+            <h1>Dry<span>Four</span></h1>
+            <div class="search-area">
                 <div class="search-box">
-                    <input type="text" id="searchInput" placeholder="O que você quer comprar hoje?">
+                    <input type="text" id="searchInput" placeholder="O que você busca?">
                     <button onclick="buscarProdutos()">Buscar</button>
                 </div>
                 <div class="filter-bar">
-                    <span>Ordenar por preço:</span>
-                    <button class="btn-filter" onclick="ordenarProdutos('menor')">Menor Valor</button>
-                    <button class="btn-filter" onclick="ordenarProdutos('maior')">Maior Valor</button>
+                    <button onclick="ordenarProdutos('menor')">Menor Preço</button>
+                    <button onclick="ordenarProdutos('maior')">Maior Preço</button>
                 </div>
             </div>
         </div>
     </header>
 
     <main class="main-layout">
-        <aside class="sidebar">
-            <h3>Categorias</h3>
-            <div class="dropdown">
-                <button class="dropbtn" onclick="toggleDropdown('nicho-tech')">Tecnologia ▾</button>
-                <div id="nicho-tech" class="dropdown-content"></div>
-            </div>
-            <div class="dropdown">
-                <button class="dropbtn" onclick="toggleDropdown('nicho-casa')">Casa & Eletro ▾</button>
-                <div id="nicho-casa" class="dropdown-content"></div>
-            </div>
+        <aside class="tab">
+            <button class="tablinks active" onclick="openTab(event, 'results-section')">🔍 Resultados</button>
+            <button class="tablinks" onclick="openTab(event, 'nicho-tech')">📱 Tecnologia</button>
+            <button class="tablinks" onclick="openTab(event, 'nicho-casa')">🏠 Casa</button>
         </aside>
 
-        <section class="results-area">
-            <div id="loading" class="loading-msg hidden">🔍 Buscando as melhores ofertas...</div>
-            
-            <div id="resultsGrid" class="results-grid"></div>
-            
-            <div id="pagination" class="pagination hidden">
-                <button onclick="mudarPagina(-1)" id="btnPrev">Anterior</button>
-                <span id="pageIndicator">Página 1</span>
-                <button onclick="mudarPagina(1)" id="btnNext">Próxima</button>
+        <div class="content-area">
+            <div id="results-section" class="tabcontent" style="display: block;">
+                <div id="loading" class="hidden">Buscando ofertas...</div>
+                <div id="resultsGrid" class="results-grid"></div>
+                <div id="pagination" class="pagination hidden">
+                    <button onclick="mudarPagina(-1)">Anterior</button>
+                    <span id="pageIndicator">Página 1</span>
+                    <button onclick="mudarPagina(1)">Próxima</button>
+                </div>
             </div>
 
-            <div class="adsense-container">
-                <p>Publicidade Google AdSense</p>
+            <div id="nicho-tech" class="tabcontent">
+                <h3>Ofertas de Tecnologia</h3>
+                <div id="grid-tech" class="results-grid"></div>
             </div>
-        </section>
+
+            <div id="nicho-casa" class="tabcontent">
+                <h3>Casa & Eletro</h3>
+                <div id="grid-casa" class="results-grid"></div>
+            </div>
+        </div>
     </main>
-
-    <footer>
-        <p>&copy; 2026 DryFour - Comparador de Ofertas</p>
-    </footer>
 
     <script src="script.js"></script>
 </body>
