@@ -3,13 +3,12 @@ const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
 const afiliados = require('./linksAfiliados'); 
-const { buscarAmazon } = require('./services/rainforestService');
+const { buscarGoogleShopping } = require('./services/serpwowService'); // Trocado!
 
 const app = express();
 app.use(cors());
 app.use(express.static('public'));
 
-// Conexão simplificada para Neon.tech (funciona no Render e futuramente na Hostinger)
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: { rejectUnauthorized: false }
@@ -20,16 +19,15 @@ app.get('/api/search', async (req, res) => {
     if (!query) return res.json([]);
 
     try {
-        console.log(`🔍 Iniciando busca por: ${query}`);
+        console.log(`🔍 Buscando via SerpWow por: ${query}`);
 
-        // --- 1. FILTRAR PRODUTOS MANUAIS (linksAfiliados.js) ---
-        // Eles sempre são processados primeiro
+        // 1. FILTRAR PRODUTOS MANUAIS
         const manuais = afiliados.produtos.filter(p => 
             (p.title || "").toLowerCase().includes(query) || 
             (p.keyword || "").toLowerCase().includes(query)
         ).map(p => ({ ...p, isManual: true }));
 
-        // --- 2. BUSCA NO CACHE (Neon) ---
+        // 2. BUSCA NO CACHE (Neon)
         let produtosDoCache = [];
         try {
             const cacheQuery = `
@@ -43,22 +41,20 @@ app.get('/api/search', async (req, res) => {
             console.error("⚠️ Erro no Banco Neon:", dbError.message);
         }
 
-        // Se achou no cache, soma com os manuais e envia
         if (produtosDoCache.length > 0) {
-            console.log("🚀 CACHE: Resultados encontrados no Neon!");
+            console.log("🚀 CACHE: Resultados encontrados!");
             return res.json([...manuais, ...produtosDoCache]);
         }
 
-        // --- 3. BUSCA NA AMAZON (Rainforest) ---
-        console.log("💰 API AMAZON: Buscando dados novos...");
-        const apiResults = await buscarAmazon(query).catch((err) => {
-            console.error("❌ Erro na Rainforest:", err.message);
+        // 3. BUSCA NA SERPWOW (Google Shopping)
+        console.log("💰 API SERPWOW: Buscando dados novos...");
+        const apiResults = await buscarGoogleShopping(query).catch((err) => {
+            console.error("❌ Erro na SerpWow:", err.message);
             return [];
         });
 
-        // --- 4. SALVAR RESULTADOS DA API NO CACHE ---
+        // 4. SALVAR NO CACHE
         if (apiResults.length > 0) {
-            // Salvamos no banco em segundo plano para não atrasar o usuário
             apiResults.forEach(p => {
                 pool.query(
                     `INSERT INTO cache_produtos (termo_busca, title, price, link, thumbnail, store) VALUES ($1, $2, $3, $4, $5, $6)`,
@@ -67,8 +63,7 @@ app.get('/api/search', async (req, res) => {
             });
         }
 
-        // --- 5. RESULTADO FINAL (SOMA) ---
-        console.log(`✅ Busca finalizada. Manuais: ${manuais.length}, API: ${apiResults.length}`);
+        console.log(`✅ Finalizado. Manuais: ${manuais.length}, API: ${apiResults.length}`);
         res.json([...manuais, ...apiResults]);
 
     } catch (error) {
@@ -77,5 +72,5 @@ app.get('/api/search', async (req, res) => {
     }
 });
 
-const PORT = process.env.PORT || 10000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`🚀 Servidor rodando na porta ${PORT}`));
