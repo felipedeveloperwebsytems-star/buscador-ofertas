@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-async function buscarGoogleShopping(query) {
+async function buscarGoogleShopping(query) { // Mantive o nome da função para não quebrar o server.js
     const apiKey = process.env.SERPWOW_API_KEY;
 
     try {
@@ -8,32 +8,30 @@ async function buscarGoogleShopping(query) {
             params: {
                 api_key: apiKey,
                 q: query,
-                search_type: 'shopping',
-                google_domain: 'google.com.br',
-                location: 'Brazil',
-                gl: 'br',
-                hl: 'pt',
-                page: '1'
+                engine: 'amazon', // Definindo o motor para Amazon
+                amazon_domain: 'amazon.com.br',
+                type: 'search'
             },
             timeout: 15000 
         });
 
-        // A SerpWow retorna os resultados em shopping_results
-        const products = response.data.shopping_results || [];
+        // O log do playground mostrou que os resultados vêm em "amazon_results"
+        const products = response.data.amazon_results || [];
 
         return products.map(item => {
+            // A SerpWow para Amazon usa "image" e "price.value" ou "price.raw"
             return {
                 title: item.title,
-                price: item.price ? item.price : "Ver na Loja",
+                price: item.price ? item.price.raw : "Ver na Loja",
                 link: item.link,
                 thumbnail: item.image,
-                store: item.source || "Loja Online",
+                store: "Amazon.com.br",
                 isManual: false
             };
         });
 
     } catch (error) {
-        console.error("ERRO SERPWOW:", error.message);
+        console.error("ERRO SERPWOW (Amazon):", error.message);
         return [];
     }
 }
