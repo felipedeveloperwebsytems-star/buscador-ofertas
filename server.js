@@ -9,9 +9,15 @@ const app = express();
 app.use(cors());
 app.use(express.static('public'));
 
+// Configuração otimizada para o Banco Neon
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false }
+    ssl: { 
+        rejectUnauthorized: false 
+    },
+    max: 10,
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 5000,
 });
 
 app.get('/api/search', async (req, res) => {
@@ -19,7 +25,7 @@ app.get('/api/search', async (req, res) => {
     if (!query) return res.json([]);
 
     try {
-        console.log(`🔍 Buscando via SerpWow por: ${query}`);
+        console.log(`🔍 Buscando por: "${query}"`);
 
         // 1. FILTRAR PRODUTOS MANUAIS
         const manuais = afiliados.produtos.filter(p => 
@@ -38,39 +44,48 @@ app.get('/api/search', async (req, res) => {
             const cacheResult = await pool.query(cacheQuery, [query]);
             produtosDoCache = cacheResult.rows;
         } catch (dbError) {
-            console.error("⚠️ Erro no Banco Neon:", dbError.message);
+            console.error("⚠️ Erro ao ler Banco Neon:", dbError.message);
         }
 
         if (produtosDoCache.length > 0) {
-            console.log("🚀 CACHE: Resultados encontrados!");
+            console.log(`🚀 CACHE: Encontrado para "${query}"!`);
             return res.json([...manuais, ...produtosDoCache]);
         }
 
-        // 3. BUSCA NA SERPWOW
-        console.log("💰 API SERPWOW: Buscando dados novos...");
+        // 3. BUSCA NA SERPWOW (Se não houver cache)
+        console.log("💰 API SERPWOW: Chamando API externa...");
         const apiResults = await buscarGoogleShopping(query).catch((err) => {
             console.error("❌ Erro na SerpWow:", err.message);
             return [];
         });
 
-        // 4. SALVAR NO CACHE
+        // 4. SALVAR NO CACHE (Aguardando conclusão para garantir gravação)
         if (apiResults.length > 0) {
-            apiResults.forEach(p => {
-                pool.query(
-                    `INSERT INTO cache_produtos (termo_busca, title, price, link, thumbnail, store) VALUES ($1, $2, $3, $4, $5, $6)`,
-                    [query, p.title, p.price, p.link, p.thumbnail, p.store]
-                ).catch(err => console.error("Erro ao salvar cache:", err.message));
-            });
+            try {
+                const savePromises = apiResults.map(p => {
+                    return pool.query(
+                        `INSERT INTO cache_produtos (termo_busca, title, price, link, thumbnail, store) VALUES ($1, $2, $3, $4, $5, $6)`,
+                        [query, p.title, p.price, p.link, p.thumbnail, p.store]
+                    );
+                });
+                await Promise.all(savePromises);
+                console.log(`💾 Banco Neon: Cache gravado para "${query}"`);
+            } catch (saveError) {
+                console.error("❌ Erro ao gravar no banco:", saveError.message);
+            }
         }
 
-        console.log(`✅ Finalizado. Manuais: ${manuais.length}, API: ${apiResults.length}`);
+        console.log(`✅ Busca finalizada. Totais: Manuais: ${manuais.length}, API: ${apiResults.length}`);
         res.json([...manuais, ...apiResults]);
 
     } catch (error) {
-        console.error("Erro fatal na busca:", error);
+        console.error("Erro fatal no servidor:", error);
         res.status(500).json({ error: "Erro interno no servidor" });
     }
 });
 
-const PORT = process.env.PORT || 10000; // Render usa 10000 geralmente
-app.listen(PORT, () => console.log(`🚀 Servidor rodando na porta ${PORT}`));
+const PORT = process.env.PORT || 10000;
+app.listen(PORT, () => {
+    console.log(`🚀 Servidor rodando na porta ${PORT}`);
+    console.log(`🔗 Conexão com Banco de Dados: ${process.env.DATABASE_URL ? "Configurada" : "Faltando"}`);
+});
