@@ -1,10 +1,11 @@
 :root {
     --primary: #2563eb;
-    --neon-blue: #00d4ff; /* Azul Neon mais vibrante */
+    --neon-blue: #00d4ff;
     --dark: #1e293b;
     --light: #f8fafc;
     --gray: #64748b;
-    --light-blue: #93c5fd; 
+    --light-blue: #93c5fd;
+    --amazon-orange: #ff9900;
 }
 
 body {
@@ -81,28 +82,16 @@ button {
     height: 100%;
     background-color: var(--neon-blue);
     transition: width 0.3s ease;
-    /* Efeito Neon: Brilho Azul */
-    box-shadow: 0 0 10px var(--neon-blue), 0 0 5px var(--neon-blue);
-    /* Animação de Pulsação de Brilho */
+    box-shadow: 0 0 10px var(--neon-blue);
     animation: pulse-neon 1.5s infinite ease-in-out;
 }
 
 @keyframes pulse-neon {
-    0% { 
-        opacity: 1; 
-        box-shadow: 0 0 10px var(--neon-blue), 0 0 5px var(--neon-blue);
-    }
-    50% { 
-        opacity: 0.7; 
-        box-shadow: 0 0 15px var(--neon-blue), 0 0 10px var(--neon-blue);
-    }
-    100% { 
-        opacity: 1; 
-        box-shadow: 0 0 10px var(--neon-blue), 0 0 5px var(--neon-blue);
-    }
+    0%, 100% { opacity: 1; box-shadow: 0 0 10px var(--neon-blue); }
+    50% { opacity: 0.7; box-shadow: 0 0 15px var(--neon-blue); }
 }
-/* -------------------------------------------- */
 
+/* --- GRID E CARDS --- */
 .results-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -115,85 +104,91 @@ button {
     padding: 15px;
     border-radius: 12px;
     box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-    transition: transform 0.2s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     flex-direction: column;
+    border: 1px solid #e2e8f0;
+    position: relative;
 }
 
-.card:hover { transform: translateY(-5px); }
+.card:hover { 
+    transform: translateY(-8px);
+    box-shadow: 0 12px 20px -5px rgba(0,0,0,0.15);
+}
+
+/* --- CARD DESTAQUE (AFILIADO) PROFISSIONAL --- */
+.card.destaque {
+    border: none; /* Removemos a borda padrão para usar o gradiente */
+    padding: 17px; /* Compensa a borda interna */
+    background: linear-gradient(white, white) padding-box,
+                linear-gradient(45deg, #2563eb, #00d4ff, #ff9900) border-box;
+    border: 3px solid transparent;
+}
+
+.card.destaque::before {
+    content: "OFERTA VERIFICADA";
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--amazon-orange);
+    color: white;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 4px 12px;
+    border-radius: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    z-index: 10;
+}
 
 .card img { width: 100%; height: 200px; object-fit: contain; margin-bottom: 15px; }
-
-.card h3 { font-size: 16px; margin: 10px 0; height: 40px; overflow: hidden; }
-
-.card .price { font-size: 20px; font-weight: 700; color: var(--primary); }
-
-.card .store { font-size: 12px; color: var(--gray); margin-bottom: 15px; }
+.card h3 { font-size: 15px; margin: 10px 0; height: 45px; overflow: hidden; line-height: 1.4; }
+.card .price { font-size: 22px; font-weight: 800; color: var(--dark); margin-bottom: 5px; }
+.card .store { font-size: 13px; color: var(--amazon-orange); font-weight: 600; margin-bottom: 15px; }
 
 .card a {
     text-decoration: none;
     background: var(--dark);
     color: white;
     text-align: center;
-    padding: 10px;
-    border-radius: 6px;
+    padding: 12px;
+    border-radius: 8px;
     margin-top: auto;
+    font-weight: 700;
+    transition: background 0.2s;
 }
+
+.card.destaque a {
+    background: var(--primary);
+}
+
+.card a:hover { opacity: 0.9; }
 
 .hidden { display: none !important; }
 
-.card.destaque {
-    border: 2px solid #fbbf24;
-    background: #fffdf5;
-    position: relative;
-    transform: scale(1.02);
-}
-
-.card.destaque::before {
-    content: "OFERTA PARCEIRA";
-    position: absolute;
-    top: -10px;
-    left: 10px;
-    background: #fbbf24;
-    color: #000;
-    font-size: 10px;
-    font-weight: bold;
-    padding: 2px 8px;
-    border-radius: 4px;
-}
-
+/* --- FILTROS --- */
 .filter-bar {
-    margin-top: 20px;
+    margin-top: 25px;
     display: flex;
     gap: 12px;
     align-items: center;
     justify-content: center;
 }
 
-.filter-bar span {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--gray);
-}
-
 .btn-filter {
     background: white;
-    border: 2px solid #e2e8f0;
+    border: 1px solid #e2e8f0;
     color: var(--dark);
-    padding: 8px 18px;
+    padding: 10px 20px;
     border-radius: 50px;
     cursor: pointer;
     font-weight: 600;
-    font-family: 'Inter', sans-serif;
     font-size: 14px;
-    transition: all 0.2s ease;
-    outline: none;
+    transition: all 0.2s;
 }
 
 .btn-filter:hover {
-    background: var(--primary);
-    color: white;
     border-color: var(--primary);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+    color: var(--primary);
+    background: #eff6ff;
 }

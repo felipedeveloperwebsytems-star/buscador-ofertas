@@ -16,10 +16,10 @@ async function buscarProdutos() {
     let progress = 0;
     const interval = setInterval(() => {
         if (progress < 90) {
-            progress += Math.random() * 12; 
+            progress += Math.random() * 15; 
             progressBar.style.width = `${progress}%`;
         }
-    }, 250);
+    }, 200);
 
     try {
         const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
@@ -32,7 +32,7 @@ async function buscarProdutos() {
             loading.classList.add('hidden');
             produtosAtuais = data;
             exibirProdutos(data);
-        }, 600); // Tempo um pouco maior para apreciar o efeito 100% Neon
+        }, 400);
 
     } catch (error) {
         clearInterval(interval);
@@ -46,7 +46,7 @@ function exibirProdutos(produtos) {
     grid.innerHTML = '';
 
     if (produtos.length === 0) {
-        grid.innerHTML = '<p style="text-align:center; width:100%;">Nenhuma oferta encontrada.</p>';
+        grid.innerHTML = '<p style="text-align:center; width:100%; padding: 50px;">Nenhuma oferta encontrada. Tente outro termo!</p>';
         return;
     }
 
@@ -58,8 +58,8 @@ function exibirProdutos(produtos) {
             <img src="${p.thumbnail || 'https://via.placeholder.com/200'}" alt="${p.title}">
             <h3>${p.title}</h3>
             <p class="price">${p.price}</p>
-            <p class="store">Loja: ${p.store}</p>
-            <a href="${p.link}" target="_blank">Ver na Loja</a>
+            <p class="store">📦 ${p.store}</p>
+            <a href="${p.link}" target="_blank">IR PARA LOJA</a>
         `;
         grid.appendChild(card);
     });
@@ -67,13 +67,11 @@ function exibirProdutos(produtos) {
 
 function ordenarProdutos(tipo) {
     if (produtosAtuais.length === 0) return;
-
     const ordenados = [...produtosAtuais].sort((a, b) => {
         const precoA = parseFloat(a.price.replace(/[^\d,]/g, '').replace(',', '.'));
         const precoB = parseFloat(b.price.replace(/[^\d,]/g, '').replace(',', '.'));
         return tipo === 'menor' ? precoA - precoB : precoB - precoA;
     });
-
     exibirProdutos(ordenados);
 }
 
