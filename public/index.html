@@ -25,9 +25,16 @@
     </header>
 
     <main class="container">
-        <div id="loading" class="hidden">Buscando as melhores ofertas...</div>
-        <div id="resultsGrid" class="results-grid">
+        <div id="loading" class="hidden">
+            <div class="loading-content">
+                <span>Buscando as melhores ofertas...</span>
+                <div class="progress-container">
+                    <div id="progressBar" class="progress-bar"></div>
+                </div>
             </div>
+        </div>
+        
+        <div id="resultsGrid" class="results-grid"></div>
     </main>
 
     <script src="script.js"></script>

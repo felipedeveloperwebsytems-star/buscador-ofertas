@@ -1,77 +1,80 @@
-let produtosCache = []; 
+let produtosAtuais = [];
 
 async function buscarProdutos() {
-    const query = document.getElementById('searchInput').value.trim();
-    const grid = document.getElementById('resultsGrid');
+    const input = document.getElementById('searchInput');
+    const query = input.value.trim();
     const loading = document.getElementById('loading');
+    const progressBar = document.getElementById('progressBar');
+    const grid = document.getElementById('resultsGrid');
 
-    if (!query) return alert('Digite algo para buscar!');
+    if (!query) return;
 
     grid.innerHTML = '';
     loading.classList.remove('hidden');
+    progressBar.style.width = '0%';
+    
+    let progress = 0;
+    const interval = setInterval(() => {
+        if (progress < 90) {
+            progress += Math.random() * 12; 
+            progressBar.style.width = `${progress}%`;
+        }
+    }, 250);
 
     try {
         const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
         const data = await response.json();
-        
-        loading.classList.add('hidden');
-        
-        if (data.error) {
-            grid.innerHTML = `<p>Erro: ${data.error}</p>`;
-            return;
-        }
 
-        produtosCache = data; 
-        renderizarCards(produtosCache);
+        clearInterval(interval);
+        progressBar.style.width = '100%';
+
+        setTimeout(() => {
+            loading.classList.add('hidden');
+            produtosAtuais = data;
+            exibirProdutos(data);
+        }, 600); // Tempo um pouco maior para apreciar o efeito 100% Neon
 
     } catch (error) {
-        loading.classList.add('hidden');
-        grid.innerHTML = '<p>Erro ao conectar com o servidor.</p>';
-        console.error(error);
+        clearInterval(interval);
+        console.error("Erro na busca:", error);
+        loading.innerHTML = "Erro ao buscar ofertas.";
     }
 }
 
-function renderizarCards(lista) {
+function exibirProdutos(produtos) {
     const grid = document.getElementById('resultsGrid');
     grid.innerHTML = '';
 
-    if (!Array.isArray(lista) || lista.length === 0) {
-        grid.innerHTML = '<p>Nenhum produto encontrado. Tente outro termo!</p>';
+    if (produtos.length === 0) {
+        grid.innerHTML = '<p style="text-align:center; width:100%;">Nenhuma oferta encontrada.</p>';
         return;
     }
 
-    lista.forEach(item => {
+    produtos.forEach(p => {
         const card = document.createElement('div');
-        card.className = item.isManual ? 'card destaque' : 'card';
+        card.className = `card ${p.isManual ? 'destaque' : ''}`;
         
-        const imagem = item.thumbnail || 'https://via.placeholder.com/200?text=Sem+Imagem';
-        const tituloCurto = item.title.length > 60 ? item.title.substring(0, 60) + '...' : item.title;
-
         card.innerHTML = `
-            <img src="${imagem}" alt="${item.title}" loading="lazy">
-            <h3 title="${item.title}">${tituloCurto}</h3>
-            <p class="price">${item.price}</p>
-            <p class="store">Loja: ${item.store}</p>
-            <a href="${item.link}" target="_blank" rel="noopener noreferrer">Ver na Loja</a>
+            <img src="${p.thumbnail || 'https://via.placeholder.com/200'}" alt="${p.title}">
+            <h3>${p.title}</h3>
+            <p class="price">${p.price}</p>
+            <p class="store">Loja: ${p.store}</p>
+            <a href="${p.link}" target="_blank">Ver na Loja</a>
         `;
         grid.appendChild(card);
     });
 }
 
-function ordenarProdutos(criterio) {
-    if (produtosCache.length === 0) return;
+function ordenarProdutos(tipo) {
+    if (produtosAtuais.length === 0) return;
 
-    const listaOrdenada = [...produtosCache].sort((a, b) => {
-        const extrairPreco = (p) => {
-            if (!p || typeof p !== 'string') return 0;
-            const numerico = p.replace('R$', '').replace(/\./g, '').replace(',', '.').trim();
-            return parseFloat(numerico) || 0;
-        };
-        const precoA = extrairPreco(a.price);
-        const precoB = extrairPreco(b.price);
-        return criterio === 'menor' ? precoA - precoB : precoB - precoA;
+    const ordenados = [...produtosAtuais].sort((a, b) => {
+        const precoA = parseFloat(a.price.replace(/[^\d,]/g, '').replace(',', '.'));
+        const precoB = parseFloat(b.price.replace(/[^\d,]/g, '').replace(',', '.'));
+        return tipo === 'menor' ? precoA - precoB : precoB - precoA;
     });
-    renderizarCards(listaOrdenada);
+
+    exibirProdutos(ordenados);
 }
 
 document.getElementById('searchInput').addEventListener('keypress', (e) => {
