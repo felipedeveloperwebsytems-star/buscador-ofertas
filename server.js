@@ -3,7 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
 const afiliados = require('./linksAfiliados'); 
-const { buscarGoogleShopping } = require('./services/serpwowService'); // Trocado!
+const { buscarGoogleShopping } = require('./services/serpwowService');
 
 const app = express();
 app.use(cors());
@@ -46,7 +46,7 @@ app.get('/api/search', async (req, res) => {
             return res.json([...manuais, ...produtosDoCache]);
         }
 
-        // 3. BUSCA NA SERPWOW (Google Shopping)
+        // 3. BUSCA NA SERPWOW
         console.log("💰 API SERPWOW: Buscando dados novos...");
         const apiResults = await buscarGoogleShopping(query).catch((err) => {
             console.error("❌ Erro na SerpWow:", err.message);
@@ -72,5 +72,5 @@ app.get('/api/search', async (req, res) => {
     }
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000; // Render usa 10000 geralmente
 app.listen(PORT, () => console.log(`🚀 Servidor rodando na porta ${PORT}`));

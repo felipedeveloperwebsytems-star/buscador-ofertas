@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-async function buscarGoogleShopping(query) { // Mantive o nome da função para não quebrar o server.js
+async function buscarGoogleShopping(query) { 
     const apiKey = process.env.SERPWOW_API_KEY;
 
     try {
@@ -8,18 +8,17 @@ async function buscarGoogleShopping(query) { // Mantive o nome da função para 
             params: {
                 api_key: apiKey,
                 q: query,
-                engine: 'amazon', // Definindo o motor para Amazon
+                engine: 'amazon',
                 amazon_domain: 'amazon.com.br',
                 type: 'search'
             },
-            timeout: 15000 
+            timeout: 30000 // Aumentado para 30s para evitar o erro de timeout no Render
         });
 
-        // O log do playground mostrou que os resultados vêm em "amazon_results"
+        // O seu teste curl confirmou que os dados vêm em amazon_results
         const products = response.data.amazon_results || [];
 
         return products.map(item => {
-            // A SerpWow para Amazon usa "image" e "price.value" ou "price.raw"
             return {
                 title: item.title,
                 price: item.price ? item.price.raw : "Ver na Loja",
