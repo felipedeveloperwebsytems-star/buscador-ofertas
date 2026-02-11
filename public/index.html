@@ -23,6 +23,36 @@
                 <button class="btn-filter" onclick="ordenarProdutos('maior')">Maior Preço</button>
             </div>
         </div>
+
+        <nav class="df-navbar-nicho">
+                <div class="df-custom-select-wrapper">
+                    <select id="df-nichoSelect">
+                        <option value="0">Em Destaque</option>
+                        
+                        <option value="parent" data-nicho="pc">Acessórios de Computador</option>
+                        <option value="sub" data-parent="pc">Teclado Mecânico</option>
+                        <option value="sub" data-parent="pc">Mouse Gamer</option>
+                        <option value="sub" data-parent="pc">Headset</option>
+                        <option value="sub" data-parent="pc">Monitor 144Hz</option>
+                        
+                        <option value="parent" data-nicho="celular">Smartphones</option>
+                        <option value="sub" data-parent="celular">iPhone 15</option>
+                        <option value="sub" data-parent="celular">Galaxy S23</option>
+                        <option value="sub" data-parent="celular">Xiaomi Linha 12</option>
+                        <option value="sub" data-parent="celular">Motorola Edge</option>
+
+                        <option value="parent" data-nicho="eletro">Eletrônicos</option>
+                        <option value="sub" data-parent="eletro">Carregador de Bateria</option>
+                        <option value="sub" data-parent="eletro">Lanterna Tática</option>
+                        <option value="sub" data-parent="eletro">Caixa de Som Bluetooth</option>
+                    </select>
+                </div>
+
+                <div class="df-nav-links">
+                    <a href="#home"><i class="fas fa-bolt"></i> <span>DryFour</span> Ofertas</a>
+                    <a href="#calculadora"><i class="fas fa-calculator"></i> <span>DryFour</span> Calculadora</a>
+                </div>
+        </nav>      
     </header>
 
     <main class="container">
