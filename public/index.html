@@ -5,26 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DryFour | Comparador de Ofertas</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <header>
-        <div class="container">
-            <h1>Dry<span>Four</span> Ofertas</h1>
+        <div class="container header-top">
+            <h1 class="logo">Dry<span>Four</span> Ofertas</h1>
+            <nav class="global-nav">
+                <a href="index.html" class="nav-link active"><i class="fas fa-search"></i> <span>Buscador</span></a>
+                <a href="dicas.html" class="nav-link"><i class="fas fa-lightbulb"></i> <span>Dicas</span></a>
+                <a href="calculadora.html" class="nav-link"><i class="fas fa-calculator"></i> <span>Calculadora</span></a>
+            </nav>
+        </div>
+
+        <div class="search-container container">
             <div class="search-box">
                 <input type="text" id="searchInput" placeholder="O que você quer comprar hoje?">
                 <button onclick="buscarProdutos()">Buscar</button>
             </div>
 
-            <div class="filter-bar">
-                <span>Ordenar por:</span>
-                <button class="btn-filter" onclick="ordenarProdutos('menor')">Menor Preço</button>
-                <button class="btn-filter" onclick="ordenarProdutos('maior')">Maior Preço</button>
-            </div>
-        </div>
-
-        <nav class="df-navbar-nicho">
+            <nav class="df-navbar-nicho">
                 <div class="df-custom-select-wrapper">
                     <select id="df-nichoSelect">
                         <option value="0">Em Destaque</option>
@@ -48,11 +49,12 @@
                     </select>
                 </div>
 
-                <div class="df-nav-links">
-                    <a href="#home"><i class="fas fa-bolt"></i> <span>DryFour</span> Ofertas</a>
-                    <a href="#calculadora"><i class="fas fa-calculator"></i> <span>DryFour</span> Calculadora</a>
+                <div class="filter-bar">
+                    <button class="btn-filter" onclick="ordenarProdutos('menor')">Menor Preço</button>
+                    <button class="btn-filter" onclick="ordenarProdutos('maior')">Maior Preço</button>
                 </div>
-        </nav>      
+            </nav>
+        </div>
     </header>
 
     <main class="container">

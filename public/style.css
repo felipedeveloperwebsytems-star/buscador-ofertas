@@ -1,3 +1,4 @@
+/* --- PALETA DE CORES COMPLETA --- */
 :root {
     --primary: #2563eb;
     --neon-blue: #00d4ff;
@@ -6,14 +7,17 @@
     --gray: #64748b;
     --light-blue: #93c5fd;
     --amazon-orange: #ff9900;
+    
+    /* Variáveis do Módulo de Nicho */
     --df-primary: #2563eb;
     --df-neon-blue: #00d4ff;
     --df-dark-deep: #0f172a; 
     --df-dark-soft: #1e293b; 
     --df-text-muted: #94a3b8;
-    --df-amazon-orange: #ff9900; /* Cor Laranja Original */
+    --df-amazon-orange: #ff9900;
 }
 
+/* --- BASE --- */
 body {
     font-family: 'Inter', sans-serif;
     background-color: var(--light);
@@ -21,67 +25,119 @@ body {
     color: var(--dark);
 }
 
-.container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+.container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+.hidden { display: none !important; }
 
-header { background: white; padding: 40px 0; border-bottom: 1px solid #e2e8f0; text-align: center; }
+/* --- HEADER --- */
+header { background: white; padding: 20px 0; border-bottom: 1px solid #e2e8f0; }
 
-h1 span { color: var(--primary); }
-
-.search-box {
-    margin-top: 20px;
+.header-top {
     display: flex;
-    justify-content: center;
-    gap: 10px;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
 }
 
-input {
-    width: 60%;
+.logo { font-size: 24px; font-weight: 700; margin: 0; }
+.logo span { color: var(--primary); }
+
+.global-nav { display: flex; gap: 10px; }
+.nav-link {
+    text-decoration: none;
+    color: var(--dark);
+    font-weight: 600;
+    padding: 10px 15px;
+    border-radius: 8px;
+    transition: 0.3s;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.nav-link i { color: var(--primary); }
+.nav-link:hover { background: #f1f5f9; }
+.nav-link.active { background: var(--primary); color: white; }
+.nav-link.active i { color: white; }
+
+/* --- BUSCA --- */
+/* --- BUSCA --- */
+.search-container { 
+    text-align: center; 
+    padding-top: 20px;
+}
+
+.search-box { 
+    display: flex; 
+    justify-content: center; 
+    gap: 10px; 
+    margin-bottom: 20px;
+    width: 100%; /* Garante que o container da busca use o espaço total */
+}
+
+.search-box input {
+    width: 100%;        /* Ocupa o espaço disponível */
+    max-width: 600px;   /* Limita o tamanho em telas grandes para não ficar exagerado */
     padding: 12px 20px;
     border: 2px solid #e2e8f0;
-    border-radius: 8px;
+    border-radius: 10px;
     font-size: 16px;
     outline: none;
+    transition: border-color 0.3s;
 }
 
-input:focus { border-color: var(--primary); }
+.search-box input:focus { 
+    border-color: var(--primary); 
+}
 
-button {
+.search-box button {
     padding: 12px 25px;
     background: var(--primary);
     color: white;
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    font-weight: 600;
+    font-weight: 700;
+    white-space: nowrap; /* Impede que o texto "Buscar" quebre em duas linhas */
 }
 
-/*navbar-modulo*/
+/* Ajuste específico para celulares muito pequenos */
+@media (max-width: 768px) {
+    .search-box {
+        flex-direction: column; /* Coloca o botão abaixo do input se necessário */
+        align-items: center;
+    }
+    
+    .search-box input, 
+    .search-box button {
+        width: 100%; /* Ambos ocupam a largura total no mobile */
+        max-width: none;
+    }
+}
+
+/* --- NAVBAR DE NICHOS --- */
 .df-navbar-nicho {
     display: flex;
     align-items: center;
     justify-content: space-between;
     background: linear-gradient(135deg, var(--df-dark-soft) 0%, var(--df-dark-deep) 100%);
-    padding: 10px 20px;
+    padding: 12px 20px;
     border-radius: 12px;
     border-bottom: 3px solid var(--df-neon-blue);
     position: relative;
     margin-top: 20px;
-    font-family: 'Inter', sans-serif;
+    flex-wrap: wrap;
+    gap: 15px;
+    box-sizing: border-box; /* Garante que o padding não aumente a largura total */
 }
 
-.df-nav-links { display: flex; gap: 20px; }
-.df-nav-links a {
-    color: white;
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 500;
-    transition: 0.3s;
-    white-space: nowrap;
+/* CUSTOM SELECT */
+.df-custom-select-wrapper { 
+    position: relative; 
+    user-select: none; 
+    flex: 1; /* Permite que o seletor cresça no mobile se necessário */
+    min-width: 220px; 
 }
-.df-nav-links a:hover { color: var(--df-neon-blue); }
 
-/* Custom Select Estilizado */
-.df-custom-select-wrapper { position: relative; user-select: none; }
 .df-custom-select-wrapper select { display: none; }
 
 .df-selected {
@@ -92,235 +148,122 @@ button {
     border-radius: 6px;
     border: 1px solid rgba(255, 255, 255, 0.2);
     font-size: 14px;
-    min-width: 220px;
     text-align: left;
     position: relative;
+    width: 100%;
+    box-sizing: border-box;
 }
 
-/* --- ANIMAÇÃO DA SETA INVERTIDA --- */
 .df-selected:after {
-    position: absolute;
     content: "";
-    top: 18px;
+    position: absolute;
+    top: 50%; 
     right: 15px;
-    width: 0; height: 0;
+    transform: translateY(-50%);
     border: 6px solid transparent;
     border-color: var(--df-neon-blue) transparent transparent transparent;
-    transition: transform 0.3s ease; /* Faz a seta girar suavemente */
+    transition: 0.3s;
 }
 
-.df-selected.df-arrow-active:after {
-    transform: rotate(180deg); /* Inverte a seta para cima */
-    top: 12px;
+.df-selected.df-arrow-active:after { 
+    transform: translateY(-100%) rotate(180deg); 
 }
 
 .df-items {
     position: absolute;
     background-color: var(--df-dark-deep);
-    top: 100%; left: 0; right: 0;
+    top: calc(100% + 5px); 
+    left: 0; 
+    width: 100%; /* Ocupa exatamente a largura do botão pai */
     z-index: 9999;
-    margin-top: 5px;
     border-radius: 8px;
     border: 1px solid var(--df-dark-soft);
     box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-    max-height: 450px;
+    max-height: 60vh; /* Altura inteligente: 60% da tela do usuário */
     overflow-y: auto;
+    box-sizing: border-box;
 }
 
-.df-items div {
-    padding: 12px 16px;
-    cursor: pointer;
-    color: white;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-    transition: 0.2s;
+/* Esconder de verdade quando tiver a classe df-hide */
+.df-items.df-hide {
+    display: none !important;
 }
 
-/* Estilo do Nicho Pai (Laranja) */
-.df-is-parent {
-    color: var(--df-amazon-orange) !important;
-    font-weight: 700;
-    text-transform: uppercase;
-    font-size: 11px;
-    letter-spacing: 1.5px;
-    background-color: rgba(0,0,0,0.2);
+.df-items div { 
+    padding: 12px 16px; 
+    color: white; 
+    cursor: pointer; 
+    border-bottom: 1px solid rgba(255,255,255,0.05); 
 }
 
-/* Estilo do Subproduto */
-.df-is-sub {
-    color: var(--df-text-muted);
-    padding-left: 30px;
-    font-size: 14px;
-    display: none; /* Escondido por padrão */
+.df-is-parent { 
+    color: var(--df-amazon-orange) !important; 
+    font-weight: 700; 
+    font-size: 11px; 
+    text-transform: uppercase; 
+    background: rgba(0,0,0,0.2); 
 }
 
-/* ANIMAÇÃO SLIDEDOWN FUNCIONAL */
-.df-is-sub.df-show {
-    display: block;
-    animation: dfSlideDown 0.3s ease-out;
+.df-is-sub { 
+    color: var(--df-text-muted); 
+    padding-left: 30px !important; 
+    display: none; 
+    font-size: 14px; 
 }
 
-.df-is-sub:hover {
-    background-color: var(--df-primary);
-    color: white;
+.df-is-sub.df-show { 
+    display: block; 
+    animation: dfSlideDown 0.3s ease; 
 }
 
-@keyframes dfSlideDown {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
+@keyframes dfSlideDown { 
+    from { opacity: 0; transform: translateY(-5px); } 
+    to { opacity: 1; transform: translateY(0); } 
 }
 
-.df-hide { display: none; }
-
-/* --- BARRA DE CARREGAMENTO NEON --- */
-#loading {
-    display: flex;
-    justify-content: center;
-    margin-top: 40px;
+/* Ajuste Mobile para a barra não quebrar */
+@media (max-width: 594px) {
+    .df-custom-select-wrapper {
+        min-width: 100%; /* No mobile pequeno, o seletor ocupa a linha toda */
+    }
 }
-
-.loading-content {
-    display: inline-flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-.loading-content span {
-    font-weight: 600;
-    color: var(--gray);
-    margin-bottom: 8px;
-}
-
-.progress-container {
-    width: 100%; 
-    height: 5px;
-    border: 1px solid var(--light-blue);
-    background-color: #e2e8f0;
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-.progress-bar {
-    width: 0%;
-    height: 100%;
-    background-color: var(--neon-blue);
-    transition: width 0.3s ease;
-    box-shadow: 0 0 10px var(--neon-blue);
-    animation: pulse-neon 1.5s infinite ease-in-out;
-}
-
-@keyframes pulse-neon {
-    0%, 100% { opacity: 1; box-shadow: 0 0 10px var(--neon-blue); }
-    50% { opacity: 0.7; box-shadow: 0 0 15px var(--neon-blue); }
-}
-
-/* --- GRID E CARDS --- */
-.results-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 25px;
-    margin-top: 40px;
-}
-
-.card {
-    background: white;
-    padding: 15px;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    display: flex;
-    flex-direction: column;
-    border: 1px solid #e2e8f0;
-    position: relative;
-}
-
-.card:hover { 
-    transform: translateY(-8px);
-    box-shadow: 0 12px 20px -5px rgba(0,0,0,0.15);
-}
-
-/* --- CARD DESTAQUE (AFILIADO) PROFISSIONAL --- */
-.card.destaque {
-    border: none; /* Removemos a borda padrão para usar o gradiente */
-    padding: 17px; /* Compensa a borda interna */
-    background: linear-gradient(white, white) padding-box,
-                linear-gradient(45deg, #2563eb, #00d4ff, #ff9900) border-box;
-    border: 3px solid transparent;
-}
-
-.card.destaque::before {
-    content: "OFERTA VERIFICADA";
-    position: absolute;
-    top: -12px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--amazon-orange);
-    color: white;
-    font-size: 11px;
-    font-weight: 800;
-    padding: 4px 12px;
-    border-radius: 20px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    z-index: 10;
-}
-
-.card img { width: 100%; height: 200px; object-fit: contain; margin-bottom: 15px; }
-.card h3 { font-size: 15px; margin: 10px 0; height: 45px; overflow: hidden; line-height: 1.4; }
-.card .price { font-size: 22px; font-weight: 800; color: var(--dark); margin-bottom: 5px; }
-.card .store { font-size: 13px; color: var(--amazon-orange); font-weight: 600; margin-bottom: 15px; }
-
-.card a {
-    text-decoration: none;
-    background: var(--dark);
-    color: white;
-    text-align: center;
-    padding: 12px;
-    border-radius: 8px;
-    margin-top: auto;
-    font-weight: 700;
-    transition: background 0.2s;
-}
-
-.card.destaque a {
-    background: var(--primary);
-}
-
-.card a:hover { opacity: 0.9; }
-
-.hidden { display: none !important; }
 
 /* --- FILTROS --- */
-.filter-bar {
-    margin-top: 25px;
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    justify-content: center;
-}
+.filter-bar { display: flex; gap: 10px; }
 
 .btn-filter {
-    background: white;
-    border: 1px solid #e2e8f0;
-    color: var(--dark);
-    padding: 10px 20px;
-    border-radius: 50px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 8px 15px;
+    border-radius: 20px;
     cursor: pointer;
     font-weight: 600;
-    font-size: 14px;
+    font-size: 13px;
     transition: all 0.2s;
 }
 
 .btn-filter:hover {
+    background: var(--primary);
     border-color: var(--primary);
-    color: var(--primary);
-    background: #eff6ff;
 }
+
+/* --- LOADING --- */
+#loading { display: flex; justify-content: center; margin-top: 40px; }
+.loading-content { display: flex; flex-direction: column; width: 300px; }
+.loading-content span { color: var(--gray); font-weight: 600; margin-bottom: 10px; text-align: center; }
+.progress-container { height: 6px; background: #e2e8f0; border-radius: 10px; overflow: hidden; border: 1px solid var(--light-blue); }
+.progress-bar { width: 0%; height: 100%; background: var(--neon-blue); box-shadow: 0 0 10px var(--neon-blue); animation: pulse-neon 1.5s infinite; }
+
+@keyframes pulse-neon { 50% { opacity: 0.7; } }
+
+/* --- GRID E CARDS --- */
+.results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 25px; margin-top: 40px; }
+.card { background: white; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; }
+.card.destaque { border: 3px solid transparent; background: linear-gradient(white, white) padding-box, linear-gradient(45deg, #2563eb, #00d4ff, #ff9900) border-box; position: relative; }
 
 /* --- SEÇÃO DE ANÚNCIOS --- */
-.ads-section {
-    margin: 40px 0;
-    text-align: center;
-}
-
+.ads-section { margin: 40px 0; text-align: center; }
 .ad-placeholder {
     background: #e2e8f0;
     border: 2px dashed #cbd5e1;
@@ -334,7 +277,7 @@ button {
     justify-content: center;
 }
 
-/* --- FOOTER MODERNO --- */
+/* --- FOOTER MODERNO COMPLETO --- */
 .footer-modern {
     background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
     color: white;
@@ -361,35 +304,22 @@ button {
     letter-spacing: 1px;
 }
 
-.footer-col p { color: #94a3b8; line-height: 1.6; font-size: 14px; }
+.footer-col p { color: #94a3b8; line-height: 1.6; font-size: 14px; margin-bottom: 10px; }
 .footer-col ul { list-style: none; padding: 0; }
-.footer-col ul li { margin-bottom: 10px; color: #94a3b8; font-size: 14px; }
+.footer-col ul li { margin-bottom: 10px; color: #94a3b8; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+.footer-col ul li i { color: var(--primary); }
 
-.partner-link {
-    color: var(--neon-blue);
-    text-decoration: none;
-    font-weight: 600;
-}
-
+.partner-link { color: var(--neon-blue); text-decoration: none; font-weight: 600; }
 .partner-link:hover { text-decoration: underline; }
 
 .social-icons { display: flex; gap: 15px; margin-top: 20px; }
 .social-icons a {
-    color: white;
-    background: rgba(255,255,255,0.1);
-    width: 35px;
-    height: 35px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    transition: 0.3s;
+    color: white; background: rgba(255,255,255,0.1);
+    width: 35px; height: 35px; display: flex;
+    align-items: center; justify-content: center;
+    border-radius: 50%; transition: 0.3s;
 }
-
-.social-icons a:hover {
-    background: var(--primary);
-    transform: translateY(-3px);
-}
+.social-icons a:hover { background: var(--primary); transform: translateY(-3px); }
 
 /* Faixa de Informação Extra */
 .footer-info-bar {
@@ -397,29 +327,46 @@ button {
     padding: 20px 0;
     border-top: 1px solid rgba(255,255,255,0.05);
 }
-
 .info-grid { text-align: center; color: #94a3b8; font-size: 13px; }
 .info-item i { color: var(--amazon-orange); margin-right: 8px; }
 
-/* Bottom Copyright */
 .footer-bottom {
     background: #0f172a;
-    padding: 20px 0;
+    padding: 25px 0;
     text-align: center;
     font-size: 12px;
     color: #64748b;
 }
 
-/* Responsividade */
+/* --- RESPONSIVIDADE --- */
 @media (max-width: 768px) {
+    .header-top { flex-direction: column; gap: 15px; }
+    .nav-link span { display: none; }
+    .search-box { flex-direction: column; }
+    .search-box input { width: 100%; }
+    .df-navbar-nicho { justify-content: center; padding: 10px 8px; }
+    .df-selected { min-width: 100%; font-size: 13px; }
     .footer-content { text-align: center; }
     .social-icons { justify-content: center; }
 }
 
-/* Mobile Logic */
-@media screen and (max-width: 768px) {
-    .df-navbar-nicho { padding: 10px 8px; }
-    .df-nav-links a span { display: none; }
-    .df-selected { min-width: 140px; font-size: 13px; }
-    .df-nav-links { gap: 10px; }
+/* AJUSTE ESPECÍFICO DE CENTRALIZAÇÃO (Mobile < 594px) */
+@media (max-width: 594px) {
+    .footer-col {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .footer-col ul {
+        padding: 0;
+        margin: 0 auto;
+        display: inline-block;
+        text-align: left; /* Mantém ícone e texto alinhados entre si */
+    }
+
+    .footer-col ul li {
+        justify-content: center; /* Centraliza o conteúdo da linha */
+    }
 }

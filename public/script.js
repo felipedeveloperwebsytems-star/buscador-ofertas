@@ -1,5 +1,6 @@
 let produtosAtuais = [];
 
+// 1. Função Principal de Busca
 async function buscarProdutos() {
     const input = document.getElementById('searchInput');
     const query = input.value.trim();
@@ -37,23 +38,23 @@ async function buscarProdutos() {
     } catch (error) {
         clearInterval(interval);
         console.error("Erro na busca:", error);
-        loading.innerHTML = "Erro ao buscar ofertas.";
+        loading.innerHTML = '<p style="color:white; text-align:center;">Erro ao conectar com o servidor.</p>';
     }
 }
 
+// 2. Renderização dos Cards
 function exibirProdutos(produtos) {
     const grid = document.getElementById('resultsGrid');
     grid.innerHTML = '';
 
     if (produtos.length === 0) {
-        grid.innerHTML = '<p style="text-align:center; width:100%; padding: 50px;">Nenhuma oferta encontrada. Tente outro termo!</p>';
+        grid.innerHTML = '<p style="text-align:center; width:100%; padding: 50px; color: #666;">Nenhuma oferta encontrada. Tente outro termo!</p>';
         return;
     }
 
     produtos.forEach(p => {
         const card = document.createElement('div');
         card.className = `card ${p.isManual ? 'destaque' : ''}`;
-        
         card.innerHTML = `
             <img src="${p.thumbnail || 'https://via.placeholder.com/200'}" alt="${p.title}">
             <h3>${p.title}</h3>
@@ -65,6 +66,7 @@ function exibirProdutos(produtos) {
     });
 }
 
+// 3. Ordenação
 function ordenarProdutos(tipo) {
     if (produtosAtuais.length === 0) return;
     const ordenados = [...produtosAtuais].sort((a, b) => {
@@ -75,58 +77,50 @@ function ordenarProdutos(tipo) {
     exibirProdutos(ordenados);
 }
 
-document.getElementById('searchInput').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') buscarProdutos();
+// 4. Suporte para Enter
+document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') buscarProdutos();
+        });
+    }
 });
 
-// função do navbar modulo
-// ... (mantenha as funções buscarProdutos, exibirProdutos e ordenarProdutos como estão)
-
-// Função do Navbar Módulo (Otimizada)
+// 5. Módulo do Custom Select (Navegação por Nichos)
 (function() {
     document.addEventListener('DOMContentLoaded', () => {
         const wrapper = document.querySelector(".df-custom-select-wrapper");
         if (!wrapper) return;
 
         const realSelect = wrapper.querySelector("select");
-        if (!realSelect) return;
-        
-        // 1. Criar elemento visual selecionado
         const selectedDiv = document.createElement("DIV");
         selectedDiv.className = "df-selected";
         selectedDiv.innerHTML = realSelect.options[realSelect.selectedIndex].innerHTML;
         wrapper.appendChild(selectedDiv);
 
-        // 2. Criar container dos itens
         const itemsContainer = document.createElement("DIV");
         itemsContainer.className = "df-items df-hide";
 
-        // Começamos do 1 para pular o "Em Destaque" se desejar, ou 0 para incluir todos
         for (let i = 0; i < realSelect.length; i++) {
             const opt = realSelect.options[i];
             const item = document.createElement("DIV");
-            
-            // Limpa o texto (remove espaços extras)
-            const cleanText = opt.text.trim();
-            item.innerHTML = cleanText;
+            item.innerHTML = opt.text.trim();
 
             if (opt.value === "parent") {
                 item.className = "df-is-parent";
                 item.setAttribute("data-nicho", opt.getAttribute("data-nicho"));
-                item.innerHTML += ' <i class="fas fa-chevron-right" style="float:right; font-size:10px; margin-top:3px; opacity:0.5;"></i>';
+                item.innerHTML += ' <i class="fas fa-chevron-right" style="float:right; font-size:10px; margin-top:3px;"></i>';
             } else if (opt.value === "sub") {
                 item.className = "df-is-sub";
                 item.setAttribute("data-parent", opt.getAttribute("data-parent"));
-            } else {
-                item.className = "df-item-default"; // Para o "Em Destaque"
             }
 
             item.addEventListener("click", function(e) {
-                e.stopPropagation();
-                
+                // Impede fechar ao clicar em categoria pai (acordeão)
                 if (this.classList.contains("df-is-parent")) {
+                    e.stopPropagation(); 
                     const target = this.getAttribute("data-nicho");
-                    // Lógica de acordeão
                     itemsContainer.querySelectorAll(".df-is-sub").forEach(sub => {
                         if (sub.getAttribute("data-parent") === target) {
                             sub.classList.toggle("df-show");
@@ -135,17 +129,15 @@ document.getElementById('searchInput').addEventListener('keypress', (e) => {
                         }
                     });
                 } else {
-                    // SELEÇÃO DE UM PRODUTO (SUB OU DEFAULT)
-                    const termoEscolhido = this.innerText.replace('new', '').trim();
+                    // Seleção de item final: fecha o dropdown e busca
+                    const termoEscolhido = this.innerText.trim();
                     selectedDiv.innerHTML = this.innerHTML;
-                    fecharDropdown();
                     
-                    // Atualiza o input visível e dispara a busca
                     const inputBusca = document.getElementById('searchInput');
-                    if(inputBusca) {
+                    if (inputBusca) {
                         inputBusca.value = termoEscolhido;
-                        // Chama a função global que você já tem no script.js
-                        buscarProdutos(); 
+                        fecharDropdown();
+                        buscarProdutos();
                     }
                 }
             });
@@ -154,22 +146,22 @@ document.getElementById('searchInput').addEventListener('keypress', (e) => {
 
         wrapper.appendChild(itemsContainer);
 
-        function fecharDropdown() {
-            itemsContainer.classList.add("df-hide");
-            selectedDiv.classList.remove("df-arrow-active");
+        function fecharDropdown() { 
+            itemsContainer.classList.add("df-hide"); 
+            selectedDiv.classList.remove("df-arrow-active"); 
         }
 
         selectedDiv.addEventListener("click", (e) => {
-            e.stopPropagation();
-            const estaEscondido = itemsContainer.classList.contains("df-hide");
-            if (estaEscondido) {
-                itemsContainer.classList.remove("df-hide");
-                selectedDiv.classList.add("df-arrow-active");
-            } else {
+            e.stopPropagation(); // Evita que o clique no botão dispare o fechamento imediato do window
+            itemsContainer.classList.toggle("df-hide");
+            selectedDiv.classList.toggle("df-arrow-active");
+        });
+
+        // CORREÇÃO: Fecha ao clicar em qualquer lugar da tela
+        window.addEventListener("click", (e) => {
+            if (!wrapper.contains(e.target)) {
                 fecharDropdown();
             }
         });
-
-        window.addEventListener("click", fecharDropdown);
     });
 })();
